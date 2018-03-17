@@ -11,6 +11,8 @@ import UIKit
 class InsertViewController: UIViewController {
     private let txtName = UITextField()
     private let txtPhoneNumber = UITextField()
+    
+    public var closureReload: (() -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -119,8 +121,12 @@ class InsertViewController: UIViewController {
                 self.alertWarning(str: "登録に失敗しました")
                 return
             }
+            //self.closureReload?()
             self.alertComfirm(str: "登録しました") {
-                self.dismiss(animated: true, completion: nil)
+//                self.dismiss(animated: true, completion: nil)
+                self.dismiss(animated: true) {
+                    self.closureReload?()
+                }
             }
         }
     }
