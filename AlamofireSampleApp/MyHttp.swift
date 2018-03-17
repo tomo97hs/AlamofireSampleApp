@@ -15,6 +15,39 @@ class MyHttp {
     private static let urlList = "/api/db/list"
     private static let urlInsert = "/api/db/insert"
     private static let urlDelete = "/api/db/delete"
+    private static let urlCount = "/api/db/count"
+    
+    //Count
+    static func requestCount(closureCompletion: ((Bool, Data?) -> Void)?) {
+        let countUrl = "\(urlServer)\(urlCount)"
+        
+        //GET
+        Alamofire
+            .request(countUrl)
+            .responseJSON { resData in
+                //エラーなら終了
+                if resData.error != nil {
+                    closureCompletion?(false, nil)
+                    return
+                }
+                
+                guard let response = resData.response else {
+                    closureCompletion?(false, nil)
+                    return
+                }
+                
+                if response.statusCode != 200 {
+                    closureCompletion?(false, nil)
+                    return
+                }
+                
+                guard let resultsData = resData.data else {
+                    closureCompletion?(false, nil)
+                    return
+                }
+                closureCompletion?(true, resultsData)
+        }
+    }
     
     //List
     static func requestList(closureCompletion: ((Bool, Data?) -> Void)?) {
@@ -52,7 +85,7 @@ class MyHttp {
     static func requestInsert(name: String, phoneNumber: String, closureCompletion: ((Bool) -> Void)?) {
         let insertUrl = "\(urlServer)\(urlInsert)"
         
-        let parameters:[String: String] = [
+        let parameters: [String: String] = [
             "Name": name,
             "PhoneNumber": phoneNumber
         ]
@@ -70,11 +103,14 @@ class MyHttp {
     }
     
     //Delete
-    static func requestDelete(closureCompletion: ((Bool) -> Void)?) {
+    static func requestDelete(seq: Int, closureCompletion: ((Bool) -> Void)?) {
         let deleteUrl = "\(urlServer)\(urlDelete)"
+        let parameters: [String: String] = [
+            "SEQ": "\(seq)"
+        ]
         //DELETE
         Alamofire
-            .request(deleteUrl, method: .delete)
+            .request(deleteUrl, method: .delete, parameters: parameters, encoding: JSONEncoding.default)
             .responseJSON { resData in
                 guard resData.error == nil else {
                     closureCompletion?(false)

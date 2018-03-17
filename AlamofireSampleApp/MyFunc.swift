@@ -30,13 +30,13 @@ extension UIViewController {
         MyFunc.alertWarning(self, str: str)
     }
     func alertComfirm(str: String) {
-        MyFunc.alertWarning(self, str: str)
+        MyFunc.alertComfirm(self, str: str)
     }
     func alertWarning(str: String, completion: (() -> Void)? ) {
         MyFunc.alertWarning(self, str: str, completion: completion)
     }
     func alertComfirm(str: String, completion: (() -> Void)? ) {
-        MyFunc.alertWarning(self, str: str, completion: completion)
+        MyFunc.alertComfirm(self, str: str, completion: completion)
     }
 }
 

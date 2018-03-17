@@ -14,6 +14,7 @@ class AddressViewController: UIViewController, UITableViewDelegate, UITableViewD
     private var itemPhoneNumber: [String] = []
     
     //プロパティ
+    var seq: Int = -1
     var name: String {
         get {
             if let value = lblName.text {
@@ -28,10 +29,7 @@ class AddressViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     var phoneNumber: [String] {
         get {
-//            if let value = itemPhoneNumber {
-//                return value
-//            }
-//            return [""]
+
             return itemPhoneNumber
         }
         set(value) {
@@ -43,7 +41,6 @@ class AddressViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         
         self.view.backgroundColor = UIColor.white
-        //lblName.backgroundColor = UIColor.lightGray
         lblName.font = UIFont.systemFont(ofSize: 30)
         lblName.adjustsFontSizeToFitWidth = true
         lblName.textAlignment = .center
@@ -95,7 +92,7 @@ class AddressViewController: UIViewController, UITableViewDelegate, UITableViewD
         btnDoCall.setTitleColor(.white, for: .normal)
         btnDoCall.layer.cornerRadius = 10.0
         self.view.addSubview(btnDoCall)
-        btnDoCall.addTarget(self, action: #selector(DoCall), for: .touchUpInside)
+        btnDoCall.addTarget(self, action: #selector(doCall), for: .touchUpInside)
         btnDoCall.translatesAutoresizingMaskIntoConstraints = false
         btnDoCall.topAnchor.constraint(equalTo: tv.bottomAnchor, constant: 10).isActive = true
         btnDoCall.bottomAnchor.constraint(equalTo: tv.bottomAnchor, constant: 50).isActive = true
@@ -105,6 +102,7 @@ class AddressViewController: UIViewController, UITableViewDelegate, UITableViewD
         if let name = lblName.text {
             self.navigationItem.title = "\(name)の連絡先"
         }
+        
         let btnEdit = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(btnDoEdit(sender:)))
         self.navigationItem.rightBarButtonItem = btnEdit
         
@@ -113,17 +111,29 @@ class AddressViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     }
     
-    @objc func DoCall() {
-        let url = NSURL(string: "tel://\(itemPhoneNumber[itemPhoneNumber.count - 1])")!
-        if #available(iOS 10.0, *) {
-            UIApplication.shared.open(url as URL)
-        } else {
-            UIApplication.shared.openURL(url as URL)
+    @objc func doCall() {
+//        let url = NSURL(string: "tel://\(itemPhoneNumber[itemPhoneNumber.count - 1])")!
+//        if #available(iOS 10.0, *) {
+//            UIApplication.shared.open(url as URL)
+//        } else {
+//            UIApplication.shared.openURL(url as URL)
+//        }
+        
+        MyHttp.requestDelete(seq: seq) { (isSuccess) in
+            if isSuccess == false  {
+                self.alertWarning(str: "削除に失敗しました")
+                return
+            }
+            self.alertComfirm(str: "削除しました") {
+                
+            }
         }
+        
     }
     
     @objc func btnDoEdit(sender: UIButton) {
-        
+        let editView = EditViewController()
+        self.present(editView, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
